@@ -286,14 +286,12 @@ def run_nmap_scan(ip):
 
 
 
-
 class CustomPDF(FPDF):
     def __init__(self, next_page_template):
         super().__init__()
         self.next_page_template = next_page_template
 
     def header(self):
-        # Only add header on the second page and onwards
         if self.page_no() > 1:
             self.set_font('helvetica', 'B', 12)
             self.cell(0, 10, 'Scan Report', new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
@@ -303,13 +301,18 @@ class CustomPDF(FPDF):
     def footer(self):
         self.set_y(-15)
         self.set_font('helvetica', 'I', 8)
-        self.cell(0, 10, f'Page {self.page_no()}', new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
+        if self.page_no() > 1:
+            self.cell(0, 10, f'Page {self.page_no() - 1}', new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
+        else:
+            self.cell(0, 10, '', new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
 
     def set_background_image(self, image_path):
         """Set background image for the current page."""
         self.image(image_path, x=0, y=0, w=210, h=297, type='', link='')
 
+
 from fpdf.enums import XPos, YPos
+
 def create_pdf(results, filename, cover_image_path, next_page_template):
     pdf = CustomPDF(next_page_template)
     
@@ -411,10 +414,6 @@ __  _  __ ____ |  |   ____  ____   _____   ____
 \ \/ \/ // __ \|  | _/ ___\/  _ \ /     \_/ __ \ 
  \     /\  ___/|  |_\  \__(  <_> )  Y Y  \  ___/ 
   \/\_/  \_____>____/\_____>____/|__|_|__/\_____>
-                                       
-
-
-
         """,
         r"""
  
@@ -425,8 +424,6 @@ __  _  __ ____ |  |   ____  ____   _____   ____
 |   |   |  \  | (  <_> ) /_/  > __ \|  | |   Y  \  ___/|  | \/
 |___|___|  /__|  \____/\___  (____  /__| |___|  /\___  >__|   
          \/           /_____/     \/          \/     \/       
-
-
         """,
         r"""
  █████╗ ██╗  ██╗     ██╗
@@ -434,10 +431,7 @@ __  _  __ ____ |  |   ____  ____   _____   ____
 ███████║█████╔╝      ██║
 ██╔══██║██╔═██╗ ██   ██║
 ██║  ██║██║  ██╗╚█████╔╝
-╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝ 
-                        
-
-     
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝   
         """,
         r"""
     
@@ -450,13 +444,7 @@ __  _  __ ____ |  |   ____  ____   _____   ____
 ██║██║╚██╗██║██╔══╝  ██║   ██║██║   ██║██╔══██║   ██║   ██╔══██║██╔══╝  ██╔══██╗
 ██║██║ ╚████║██║     ╚██████╔╝╚██████╔╝██║  ██║   ██║   ██║  ██║███████╗██║  ██║
 ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-                                                                                
-
-
-                                                              
-
-
-        """,
+       """,
                 r"""
     
 
@@ -465,15 +453,17 @@ __  _  __ ____ |  |   ____  ____   _____   ____
 ██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗  
 ██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝  
 ╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗
- ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝
-                                                              
-
-
+ ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝                                                             
         """
     ]
     return random.choice(ascii_arts)
 from tqdm import tqdm
 import time  # Used for simulating delay in the example
+import pathlib
+import pathlib
+import time
+from tqdm import tqdm
+import random  # Import random for template selection
 
 def run_all_scans(target, output_pdf_path, cover_image_path):
     """Run all scans and create the PDF report."""
@@ -497,14 +487,15 @@ def run_all_scans(target, output_pdf_path, cover_image_path):
         total_scans = len(scan_functions)
         
         # Initialize tqdm progress bar for scan operations
-        scan_progress = tqdm(total=total_scans, desc="Running Scans", ncols=100, unit="scan")
+        scan_progress = tqdm(total=total_scans, desc="Running Scans", ncols=100, unit="scan", 
+                             bar_format='\033[32m{l_bar}{bar}\033[0m| {n_fmt}/{total_fmt} [{percentage:.0f}%] {elapsed}<{remaining}')
         
         # Run each scan and update results
         for scan_name, scan_func, *args in scan_functions:
             scan_progress.set_description(f"Running {scan_name}")
 
             if scan_name == "Nmap Scan":
-                print(f"{scan_name}ning... its take time.")
+                scan_progress.write(f"{scan_name}ning... this takes time.")
             
             try:
                 # Execute the scan function
@@ -514,6 +505,11 @@ def run_all_scans(target, output_pdf_path, cover_image_path):
                 if scan_name == "Nmap Scan":
                     time.sleep(5)  # Simulate long-running process
 
+            except KeyboardInterrupt:
+                scan_progress.close()
+                tqdm.write("Scan interrupted by user.")
+                return
+            
             except Exception as e:
                 results[scan_name] = f"Error during scan: {e}"
             
@@ -531,15 +527,29 @@ def run_all_scans(target, output_pdf_path, cover_image_path):
         template_mapping = {
             "img/cover1.jpg": "img/cover2.jpg",
             "img/page1.jpg": "img/page2.jpg",
-            "img/set1.jpg": "img/set2.jpg"
+            "img/set1.jpg": "img/set2.jpg",
+            "img/A1.png": "img/A2.png"
+            
         }
         
         next_page_template = template_mapping.get(cover_image_path, None)
-
         # Create the PDF with all the results
-        create_pdf(results, output_pdf_path, cover_image_path, next_page_template)
+        pdf_filename = f"{target}_report.pdf"
+
+        # Increment filename if it already exists
+        path = pathlib.Path(pdf_filename)
+
+        i = 1
+        while path.exists():
+            pdf_filename = f"{target}_report_{i}.pdf"
+            path = pathlib.Path(pdf_filename)
+            i += 1
+
+        create_pdf(results, pdf_filename, cover_image_path, next_page_template)
+
     else:
-        print(f"Error: Unable to resolve the IP address for {target}")
+        tqdm.write(f"Error: Unable to resolve the IP address for {target}")
+
 
 def main():
     """Main function to execute the script."""
@@ -550,14 +560,15 @@ def main():
     
   
     # Select a random cover page image
-    cover_images = ["img/cover1.jpg", "img/page1.jpg", "img/set1.jpg"]  # Add your image paths here
+    cover_images = ["img/cover1.jpg", "img/page1.jpg", "img/set1.jpg","img/A1.png"]  # Add your image paths here
     cover_image_path = random.choice(cover_images)
     
     # Determine the next page template
     next_page_template = {
         "img/cover1.jpg": "img/cover2.jpg",
         "img/page1.jpg": "img/page2.jpg",
-        "img/set1.jpg": "img/set2.jpg"
+        "img/set1.jpg": "img/set2.jpg",
+        "img/A1.png": "img/A2.png"
     }.get(cover_image_path, None)
     pdf_filename = f"{target}_report.pdf"
     run_all_scans(target, pdf_filename, cover_image_path)
