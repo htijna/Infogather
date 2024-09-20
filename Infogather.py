@@ -407,8 +407,6 @@ def generate_conclusion(results):
 def get_random_ascii_art():
     ascii_arts = [
         r"""
- 
-
                .__                               
 __  _  __ ____ |  |   ____  ____   _____   ____  
 \ \/ \/ // __ \|  | _/ ___\/  _ \ /     \_/ __ \ 
@@ -416,8 +414,6 @@ __  _  __ ____ |  |   ____  ____   _____   ____
   \/\_/  \_____>____/\_____>____/|__|_|__/\_____>
         """,
         r"""
- 
-
 .___        _____                    __  .__                  
 |   | _____/ ____\____   _________ _/  |_|  |__   ___________ 
 |   |/    \   __\/  _ \ / ___\__  \\   __\  |  \_/ __ \_  __ \
@@ -434,10 +430,7 @@ __  _  __ ____ |  |   ____  ____   _____   ____
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝   
         """,
         r"""
-    
-
 █
-
 ██╗███╗   ██╗███████╗ ██████╗  ██████╗  █████╗ ████████╗██╗  ██╗███████╗██████╗ 
 ██║████╗  ██║██╔════╝██╔═══██╗██╔════╝ ██╔══██╗╚══██╔══╝██║  ██║██╔════╝██╔══██╗
 ██║██╔██╗ ██║█████╗  ██║   ██║██║  ███╗███████║   ██║   ███████║█████╗  ██████╔╝
@@ -446,8 +439,6 @@ __  _  __ ____ |  |   ____  ____   _____   ____
 ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝  ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
        """,
                 r"""
-    
-
 ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗
 ██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝
 ██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗  
@@ -458,68 +449,89 @@ __  _  __ ____ |  |   ____  ____   _____   ____
     ]
     return random.choice(ascii_arts)
 from tqdm import tqdm
-import time  # Used for simulating delay in the example
-import pathlib
-import pathlib
-import time
-from tqdm import tqdm
 import random  # Import random for template selection
+import threading
+import time
+import pathlib
+
 
 def run_all_scans(target, output_pdf_path, cover_image_path):
     """Run all scans and create the PDF report."""
     results = {}
-
-    # Resolve IP address
     ip_address = resolve_hostname(target)
     if ip_address:
         results['IP Address Resolution'] = f"Resolved IP Address: {ip_address}\n"
 
-        # List of scan functions to be performed
         scan_functions = [
             ("WHOIS Lookup", whois_lookup, target),
             ("InternetDB Information", get_ip_info_internetdb, ip_address),
             ("Geolocation Lookup", geolocation_lookup, ip_address),
             ("Shodan Information", get_ip_info_shodan, ip_address),
-            ("Nmap Scan", run_nmap_scan, ip_address)
+            ("Nmap Scan", run_nmap_scan, ip_address)  # Nmap can take a long time
         ]
-        
-        # Total number of scans
+
         total_scans = len(scan_functions)
-        
-        # Initialize tqdm progress bar for scan operations
-        scan_progress = tqdm(total=total_scans, desc="Running Scans", ncols=100, unit="scan", 
-                             bar_format='\033[32m{l_bar}{bar}\033[0m| {n_fmt}/{total_fmt} [{percentage:.0f}%] {elapsed}<{remaining}')
-        
-        # Run each scan and update results
-        for scan_name, scan_func, *args in scan_functions:
+
+        # Initialize progress bar with 100% completion (as we are using 1% increments for long tasks)
+        scan_progress = tqdm(total=100, desc="Running Scans", ncols=100, unit="%", 
+                             bar_format='\033[32m{l_bar}{bar}\033[0m| {n_fmt}/{total_fmt} [{percentage:.0f}%]')
+
+        for i, (scan_name, scan_func, *args) in enumerate(scan_functions):
             scan_progress.set_description(f"Running {scan_name}")
 
             if scan_name == "Nmap Scan":
-                scan_progress.write(f"{scan_name}ning... this takes time.")
-            
-            try:
-                # Execute the scan function
-                results[scan_name] = scan_func(*args)
+                tqdm.write(" This process may take several minutes to complete. Please be patient... ")
+                # Nmap can take a long time, so we will increment by 1% per minute while it runs
                 
-                # Simulate delay for demonstration (remove in real use case)
-                if scan_name == "Nmap Scan":
-                    time.sleep(5)  # Simulate long-running process
+                def nmap_task():
+                    # Run the actual Nmap scan in a thread
+                    try:
+                        results[scan_name] = scan_func(*args)
+                    except Exception as e:
+                        results[scan_name] = f"Error during scan: {e}"
 
-            except KeyboardInterrupt:
-                scan_progress.close()
-                tqdm.write("Scan interrupted by user.")
-                return
-            
-            except Exception as e:
-                results[scan_name] = f"Error during scan: {e}"
-            
-            # Update the progress bar
-            scan_progress.update(1)
-        
-        # Close the progress bar
+                # Start Nmap scan in a separate thread
+                nmap_thread = threading.Thread(target=nmap_task)
+                nmap_thread.start()
+
+                # Update progress by 1% every minute until Nmap is done or reaches 100%
+                try:
+                    for minute in range(1, 101):  # Maximum of 100 minutes
+                        if nmap_thread.is_alive():
+                            scan_progress.update(1)  # Increment by 1% every minute
+                            time.sleep(60)  # Wait for 1 minute
+                        else:
+                            break
+
+                    # Once complete, ensure progress reaches 100%
+                    scan_progress.n = 100
+                    scan_progress.refresh()
+
+                    # Ensure Nmap thread has finished before moving on
+                    nmap_thread.join()
+
+                except KeyboardInterrupt:
+                    scan_progress.close()
+                    tqdm.write("Scan interrupted by user.")
+                    return
+
+            else:
+                try:
+                    # Run the scan and store the result for all other scan types
+                    results[scan_name] = scan_func(*args)
+                except KeyboardInterrupt:
+                    scan_progress.close()
+                    tqdm.write("Scan interrupted by user.")
+                    return
+                except Exception as e:
+                    results[scan_name] = f"Error during scan: {e}"
+
+                # Update the progress bar for each completed scan (normal increment)
+                scan_progress.update(20)  # Increment by 20% per completed scan (except Nmap)
+
         scan_progress.close()
 
-        # Generate the conclusion based on the scan results
+        # Generate the conclusion
         conclusion = generate_conclusion(results)
         results["Conclusion"] = conclusion
 
@@ -529,16 +541,15 @@ def run_all_scans(target, output_pdf_path, cover_image_path):
             "img/page1.jpg": "img/page2.jpg",
             "img/set1.jpg": "img/set2.jpg",
             "img/A1.png": "img/A2.png"
-            
         }
-        
+
         next_page_template = template_mapping.get(cover_image_path, None)
+
         # Create the PDF with all the results
         pdf_filename = f"{target}_report.pdf"
 
         # Increment filename if it already exists
         path = pathlib.Path(pdf_filename)
-
         i = 1
         while path.exists():
             pdf_filename = f"{target}_report_{i}.pdf"
@@ -548,7 +559,7 @@ def run_all_scans(target, output_pdf_path, cover_image_path):
         create_pdf(results, pdf_filename, cover_image_path, next_page_template)
 
     else:
-        tqdm.write(f"Error: Unable to resolve the IP address for {target}")
+        tqdm.write(f"Error: Unable to resolve the IP address for {target}")  
 
 
 def main():
