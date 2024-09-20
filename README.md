@@ -36,7 +36,11 @@ Usage Instructions
 
     bash
 
-    python infogather.py --domain example.com
+    python infogather.py 
+    
+  Enter the ip or domain 
+  
+    --domain example.com
 
     Replace example.com with the target domain or IP address. The tool will perform WHOIS, Shodan, reverse DNS, and geolocation lookups and generate a PDF report of the results.
 
