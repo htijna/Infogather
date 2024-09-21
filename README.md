@@ -13,8 +13,7 @@ Features
 Installation Instructions
 Prerequisites
     Nmap: Ensure that nmap is installed, as Infogather utilizes Nmap for network scanning.
-        On Linux: sudo apt install nmap
-        On Mac: brew install nmap
+        On Linux: unavailable releasing soon
         On Windows: Download from the official website.
     Python 3.6+: Ensure that Python is installed. You can download it from here.
 
