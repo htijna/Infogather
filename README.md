@@ -1,4 +1,5 @@
-Infogather
+Infogather    ![Uploading inFO.png…]()
+
 Project Description
 
 Infogather is an information gathering tool designed for cybersecurity professionals and researchers. It performs Open Source Intelligence (OSINT) activities, gathers data from various sources, and generates detailed PDF reports. This tool facilitates quick access to WHOIS, Shodan, geolocation data, reverse DNS, and reverse IP lookup results, making it easier to analyze and interpret security-related information.
@@ -49,7 +50,7 @@ Usage Instructions
 Let me know if you'd like to make any changes or add more details!
 !!!!Change the API key if you have a premium account
 
-screenshots
+screenshots of the tool
 ![ss1](https://github.com/user-attachments/assets/8c09a4d2-06f7-40c0-8632-bc0a5bb937e0)
 
 
@@ -58,5 +59,7 @@ screenshots
 
 ![ss3](https://github.com/user-attachments/assets/5cab8a86-3683-48c0-b3a4-9220f18969a4)
 
+
+PDF/result screenshot
 
 
