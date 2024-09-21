@@ -48,3 +48,15 @@ Usage Instructions
    
 Let me know if you'd like to make any changes or add more details!
 !!!!Change the API key if you have a premium account
+
+screenshots
+![ss1](https://github.com/user-attachments/assets/8c09a4d2-06f7-40c0-8632-bc0a5bb937e0)
+
+
+![ss2](https://github.com/user-attachments/assets/a4205b42-7439-48f3-81fc-680777905224)
+
+
+![ss3](https://github.com/user-attachments/assets/5cab8a86-3683-48c0-b3a4-9220f18969a4)
+
+
+
