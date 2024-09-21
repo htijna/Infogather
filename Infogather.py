@@ -99,7 +99,7 @@ def get_ip_info_internetdb(ip):
 
 def whois_lookup(target):
     """Perform WHOIS lookup using WHOIS XML API and filter the data."""
-    api_key = 'at_zLKWf9TNvwGdkzu8cBNME0flQfdN3'
+    api_key = 'at_TA8JITS1c3xG42aplRTJKvecNIPnr'
     url = 'https://www.whoisxmlapi.com/whoisserver/WhoisService'
     
     headers = {'Content-Type': 'application/json'}
