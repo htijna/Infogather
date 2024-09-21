@@ -22,7 +22,7 @@ Install Infogather
 
    bash
 
-git clone https://github.com/your-username/infogather.git
+git clone https://github.com/htijna/Infogather.git
 cd infogather
 
 Install required dependencies:
