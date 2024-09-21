@@ -1,4 +1,4 @@
-Infogather   ![inFO](https://github.com/user-attachments/assets/ddf5da2c-80f8-4190-8c0f-83c33aa7e014)
+Infogather   
 
 
 Project Description
@@ -62,5 +62,11 @@ screenshots of the tool
 
 
 PDF/result screenshot
+![pg1](https://github.com/user-attachments/assets/ed8081b3-6e91-4ca2-86eb-dbe8dd95b584)
 
+![pg2](https://github.com/user-attachments/assets/d18ff0fe-d0ad-4e4d-ac01-1a1102eda5d8)
+
+![pg3](https://github.com/user-attachments/assets/e06c7279-d5a7-4a2e-99f6-f71921e44262)
+
+![pg4](https://github.com/user-attachments/assets/cdab5a74-9c94-454f-8bf7-345817b8b950)
 
