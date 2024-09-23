@@ -259,30 +259,47 @@ def reverse_ip_lookup(ip):
 
 
 
-
+import platform
 
 import subprocess
 
 def run_nmap_scan(ip):
+
     """Run an Nmap scan and return the results."""
+
     try:
+
         # Define the Nmap command with arguments for a fast scan
-        command = [
-            r"C:\Program Files (x86)\Nmap\nmap.exe",
-            "-sS", "-T5", "-F", "--script=vuln", "--top-ports", "15", ip
-        ]
+
+        if platform.system() == 'Windows':
+
+            command = [r"C:\Program Files (x86)\Nmap\nmap.exe", "-sS", "-T5", "-F", "--script=vuln", "--top-ports", "15", ip]
+
+        else:
+
+            command = ["sudo","nmap", "-sS", "-T5", "-F", "--script=vuln", "--top-ports", "15", ip]
+
 
         # Run the Nmap command
+
         result = subprocess.run(command, capture_output=True, text=True)
 
+
         # Return the output if the command was successful
+
         if result.returncode == 0:
+
             return result.stdout
+
         else:
+
             return f"Error running Nmap: {result.stderr}"
 
+
     except Exception as e:
+
         return f"An error occurred: {str(e)}"
+
 
 
 
