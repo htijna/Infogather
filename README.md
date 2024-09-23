@@ -41,7 +41,7 @@ Usage Instructions
 
     bash
 
-    python infogather.py 
+    python Infogather.py 
     
   Enter the ip or domain 
   
