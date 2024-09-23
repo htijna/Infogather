@@ -28,7 +28,7 @@ Install Infogather
 
     git clone https://github.com/htijna/Infogather.git
     
-    cd infogather
+    cd Infogather
 
 Install required dependencies:
 
