@@ -1,4 +1,5 @@
 Infogather   
+![infogather(1)](https://github.com/user-attachments/assets/e4046070-a2e1-4c7b-9b35-de2e23d2af2b)
 
 
 Project Description
@@ -15,7 +16,7 @@ Features
 Installation Instructions
 Prerequisites
     Nmap: Ensure that nmap is installed, as Infogather utilizes Nmap for network scanning.
-        On Linux: nmap is unavailable releasing soon
+        On Linux: available
         On Windows: Download from the official website.
     Python 3.6+: Ensure that Python is installed. You can download it from here.
 
